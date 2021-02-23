@@ -1,7 +1,7 @@
 import discord
 
-#Token is for 
-TOKEN = 'ODEwNzUwNTU1NTU5NDI4MDk2.YCoMSw.nycyTtVU4sIgYpD_ePEdMTsmm34'
+
+TOKEN = ''
 client = discord.Client(intents=discord.Intents.all())
 mondaySchedule = "Period 0/5:9:45;Period 1/6:10:34;Break:11:14;Period 2/7:11:27;Period 3/8:12:13;Lunch:12:53;PAWS:13:34;Period 4/9:14:5;School's Over!:14:45"
 mondaySchedule = mondaySchedule.split(";")
