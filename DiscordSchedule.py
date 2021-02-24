@@ -1,9 +1,11 @@
 import discord
 from discord.ext import tasks
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
-#Token is for 
-TOKEN = 'ODEzODMyOTEyMDY3MzYyODI3.YDVC9g.GobzC2BjqLSKqF5v9w4lCn_63JI'
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
 client = discord.Client()
 mondaySchedule = "Period 0/5:9:45;Period 1/6:10:34;Break:11:14;Period 2/7:11:27;Period 3/8:12:13;Lunch:12:53;PAWS:13:34;Period 4/9:14:5;School's Over!:14:45"
 mondaySchedule = mondaySchedule.split(";")
