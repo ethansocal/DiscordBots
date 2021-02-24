@@ -23,11 +23,9 @@ for dummy3 in normalSchedule:
 normalSchedule = dummy1
 dummy3 = None
 dummy1 = None
-channelMessages = []
 
 async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd="45"):
-    for deletemessage in channelMessages:
-        await deletemessage.delete()
+    
     embed = discord.Embed(title="School Schedule", url="https://newhart.schoolloop.com/file/1500178971867/1124898729487/4879874549780900083.pdf",color=0xFF0000,description="The class you should be in right now is:")
     embed.set_author(name="School Schedule Bot", url="https://github.com/ethansocal/DiscordBots/blob/main/DiscordSchedule.py", icon_url=client.user.avatar_url)
     embed.add_field(name="Class", value=message, inline=False)
@@ -37,14 +35,21 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
         for channel in guild.text_channels:
             if channel.name == "school-alerts":
                 message = await channel.send(embed=embed)
-                channelMessages.append(message)
                 
-
 @client.event
 async def on_ready():
     await alert("Class Alert")
     print(client.user.name + " has connected to discord!")
     schedule.start()
+
+@client.event
+async def on_guild_join(guild):
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        guild.me: discord.PermissionOverwrite(read_messages=True, send_messages=False)
+    }
+    channel = guild.create_text_channel("school-alerts", overwrites=overwrites)
+    channel.send("Thank you for inviting School Schedule to your server! Please manage the roles in this channel and make sure its name remains `school-events`. I will send a message everytime you need to go to a different class, or if there is an important event you should know about.")
 
 @tasks.loop(seconds=1)
 async def schedule():
