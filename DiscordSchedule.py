@@ -7,9 +7,9 @@ import os
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 client = discord.Client()
-mondaySchedule = "Period 0/5:9:45:10:28;Period 1/6:10:34:11:14;Break:11:14:11:21;Period 2/7:11:27:12:07;Period 3/8:12:13:12:53;Lunch:12:53:13:28;PAWS, click on me to get the PAWS schedule:13:34:13:59;Period 4/9:14:05:14:45;School's Over!:14:45:8:45"
+mondaySchedule = "Period 0/5:9:45:10:28;Period 1/6:10:34:11:14;Break:11:14:11:21;Period 2/7:11:27:12:07;Period 3/8:12:13:12:53;Lunch:12:53:13:28;PAWS, click on the link above to get the PAWS schedule:13:34:13:59;Period 4/9:14:05:14:45;School's Over!:14:45:8:45"
 mondaySchedule = mondaySchedule.split(";")
-normalSchedule = "Period 0/5:8:45:9:38;Period 1/6:9:45:10:34;Break:10:34:10:41;Period 2/7:10:48:11:37;Period 3/8:11:14:12:33;Lunch:12:33:13:08;PAWS, click on me to get the PAWS schedule:13:15:13:40;Period 4/9:13:47:14:35;School's Over!:14:35:8:45, tomorrow"
+normalSchedule = "Period 0/5:8:45:9:38;Period 1/6:9:45:10:34;Break:10:34:10:41;Period 2/7:10:48:11:37;Period 3/8:11:14:12:33;Lunch:12:33:13:08;PAWS, click on the link above to get the PAWS schedule:13:15:13:40;Period 4/9:13:47:14:35;School's Over!:14:35:8:45, tomorrow"
 normalSchedule = normalSchedule.split(";")
 minimumDaySchedule = "Period 0/5:8:45:9:38;Period 1/6:9:45:10:34;Break:10:34:10:41;Period 2/7:10:48:11:37;Period 3/8:11:14:12:33;Period 4/9:13:47:14:35;School's Over!:14:35:Tomorrow"
 minimumDaySchedule = minimumDaySchedule.split(";")
@@ -45,7 +45,7 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
         for guild in client.guilds:
             for channel in guild.text_channels:
                 if channel.id == 814182189460881518 or channel.id == 814195429339824169:
-                    channel.purge()
+                    await channel.purge()
 
     for guild in client.guilds:
         for channel in guild.text_channels:
@@ -96,13 +96,18 @@ async def on_message(message):
                             minimumDay = True
         now = datetime.now()
         day = now.strftime("%A")
-
-        await message.channel.send(await todaySchedule(minimumDay, day))
+        embed = discord.Embed(title="School Schedule", url="https://newhart.schoolloop.com/file/1500178971867/1124898729487/4879874549780900083.pdf",color=0x00FF00,description="The class you should be in right now is:")
+        embed.set_author(name="School Schedule Bot", url="https://github.com/ethansocal/DiscordBots/blob/main/DiscordSchedule.py", icon_url=client.user.avatar_url)
+        embed.add_field(name="Today's Schedule", value=await todaySchedule(minimumDay, day), inline=False)
+        
+        await message.channel.send(embed=embed)
     elif message.channel.id == 814194347159322644:
         for guild in client.guilds:
             for channel in guild.text_channels:
                 if channel.name == "school-alerts":
                     await channel.send(message.content)
+    elif message.channel.id == 814265383984300052:
+        await alert(message.content)
         
 @client.event
 async def on_guild_join(guild):
@@ -149,10 +154,12 @@ async def schedule():
                         await alert(time[0], time[1], time[2], time[3], time[4], day)
                         break
         if hour == 7 and minute == 0:
-            message = await todaySchedule(minimumDay, day)
+            embed = discord.Embed(title="School Schedule", url="https://newhart.schoolloop.com/file/1500178971867/1124898729487/4879874549780900083.pdf",color=0x00FF00,description="The class you should be in right now is:")
+            embed.set_author(name="School Schedule Bot", url="https://github.com/ethansocal/DiscordBots/blob/main/DiscordSchedule.py", icon_url=client.user.avatar_url)
+            embed.add_field(name="Today's Schedule", value=await todaySchedule(minimumDay, day), inline=False)
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.name == "school-alerts":
-                        channel.send(message)
+                        await channel.send(embed=embed)
 
 client.run(TOKEN)
