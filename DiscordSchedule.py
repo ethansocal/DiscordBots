@@ -3,7 +3,7 @@ from discord.ext import tasks
 from datetime import datetime
 
 #Token is for 
-TOKEN = ''
+TOKEN = 'ODEzODMyOTEyMDY3MzYyODI3.YDVC9g.GobzC2BjqLSKqF5v9w4lCn_63JI'
 client = discord.Client()
 mondaySchedule = "Period 0/5:9:45;Period 1/6:10:34;Break:11:14;Period 2/7:11:27;Period 3/8:12:13;Lunch:12:53;PAWS:13:34;Period 4/9:14:5;School's Over!:14:45"
 mondaySchedule = mondaySchedule.split(";")
@@ -24,8 +24,8 @@ dummy1 = None
 channelMessages = []
 
 async def alert(message, hourStart="8", hourFinish="45"):
-    for message in channelMessages:
-        await message.delete()
+    for deletemessage in channelMessages:
+        await deletemessage.delete()
     embed = discord.Embed(title="Class Alert", url="https://newhart.schoolloop.com/file/1500178971867/1124898729487/4879874549780900083.pdf",color=0xFF0000,description="The class you should be in right now is:")
     embed.set_author(name="School Schedule Bot", url="https://github.com/ethansocal/DiscordBots/blob/main/DiscordSchedule.py", icon_url=client.user.avatar_url)
     embed.add_field(name="Class", value=message, inline=True)
@@ -47,7 +47,7 @@ async def on_ready():
 @tasks.loop(seconds=1)
 async def schedule():
     now = datetime.now()
-    hour = int(now.strftime("%H")) - 8
+    hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
     second = int(now.strftime("%S"))
     day = now.strftime("%A")
@@ -56,9 +56,9 @@ async def schedule():
             for time in mondaySchedule:
                 if hour == int(time[1]) and minute == int(time[2]):
                     print(time[0])
+                    await alert(time[0], time[1], time[2])
                     break
         elif day != "Sunday" and day != "Saturday":
-            print("Checking")
             for time in normalSchedule:
                 if hour == int(time[1]) and minute == int(time[2]):
                     print(time[0])
