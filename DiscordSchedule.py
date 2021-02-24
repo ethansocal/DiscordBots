@@ -50,6 +50,8 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
     for guild in client.guilds:
         for channel in guild.text_channels:
             if channel.name == "school-alerts":
+                deleteMessage = await channel.send("@everyone")
+                await deleteMessage.delete()
                 message = await channel.send(embed=embed)
 
 async def todaySchedule(minimumDay, day):
@@ -160,6 +162,8 @@ async def schedule():
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.name == "school-alerts":
+                        deleteMessage = await channel.send("@everyone")
+                        await deleteMessage.delete()
                         await channel.send(embed=embed)
 
 client.run(TOKEN)
