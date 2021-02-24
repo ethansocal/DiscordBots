@@ -51,6 +51,19 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
             if channel.name == "school-alerts":
                 message = await channel.send(embed=embed)
 
+def todaySchedule(minimumDay, day):
+    if minimumDay:
+        minimumMessage = " `a` "
+    else:
+        minimumMessage = " `not a` "
+    if day == "Monday":
+        message = "Today is an online day for everyone, and it is " + minimumMessage + " minimum day."
+    elif day == "Tuesday" or day == "Thursday":
+        message = "Today is an `in-person day for Panthers`, and an `online day for Pride`, and it is" + minimumMessage + "minimum day."
+    elif day == "Wednesday" or day == "Friday":
+        message = "Today is an `in-person day for Pride`, and an `online day for Panthers`, and it is" + minimumMessage + "minimum day."
+    return message
+
 @client.event
 async def on_ready():
     print(client.user.name + " has connected to discord!")
@@ -65,7 +78,19 @@ async def on_message(message):
         await message.author.send("https://discord.gg/k5pBHxJvkX")
     elif message.content.lower() == "!invite":
         await message.channel.send("Click on the link to invite School Schedule! https://discord.com/oauth2/authorize?client_id=813832912067362827&permissions=19472&scope=bot")
+    elif message.content.lower() == "!today":
+        minimumDay = False
+        for guild in client.guilds:
+            if guild.id == 814005846718808075:
+                for channel in guild.text_channels:
+                    if channel.id == 814182189460881518:
+                        messages = await channel.history().flatten()
+                        if len(messages) > 0:
+                            minimumDay = True
+        now = datetime.now()
+        day = now.strftime("%A")
 
+        await message.channel.send(todaySchedule(minimumDay, day))
 @client.event
 async def on_guild_join(guild):
     overwrites = {
@@ -110,6 +135,11 @@ async def schedule():
                         print(time[0])
                         await alert(time[0], time[1], time[2], time[3], time[4], day)
                         break
-        
+        if hour == 7 and minute == 0:
+            message = todaySchedule(minimumDay, day)
+            for guild in client.guilds:
+                for channel in guild.text_channels:
+                    if channel.name == "school-alerts":
+                        channel.send(message)
 
 client.run(TOKEN)
