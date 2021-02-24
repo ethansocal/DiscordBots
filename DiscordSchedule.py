@@ -53,7 +53,6 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
 
 @client.event
 async def on_ready():
-    await alert("Class Alert")
     print(client.user.name + " has connected to discord!")
     schedule.start()
 
