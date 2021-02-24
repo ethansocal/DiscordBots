@@ -44,14 +44,21 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
     if message == "School's Over!":
         for guild in client.guilds:
             for channel in guild.text_channels:
-                if channel.id == 814182189460881518:
+                if channel.id == 814182189460881518 or channel.id == 814195429339824169:
                     channel.purge()
+
     for guild in client.guilds:
         for channel in guild.text_channels:
             if channel.name == "school-alerts":
                 message = await channel.send(embed=embed)
 
-def todaySchedule(minimumDay, day):
+async def todaySchedule(minimumDay, day):
+    for guild in client.guilds:
+        for channel in guild.text_channels:
+            if channel.id == 814195429339824169:
+                history = await channel.history(limit=1).flatten()
+    if len(history) == 1:
+        return history[0].content
     if minimumDay:
         minimumMessage = " `a` "
     else:
@@ -90,7 +97,13 @@ async def on_message(message):
         now = datetime.now()
         day = now.strftime("%A")
 
-        await message.channel.send(todaySchedule(minimumDay, day))
+        await message.channel.send(await todaySchedule(minimumDay, day))
+    elif message.channel.id == 814194347159322644:
+        for guild in client.guilds:
+            for channel in guild.text_channels:
+                if channel.name == "school-alerts":
+                    await channel.send(message.content)
+        
 @client.event
 async def on_guild_join(guild):
     overwrites = {
@@ -136,7 +149,7 @@ async def schedule():
                         await alert(time[0], time[1], time[2], time[3], time[4], day)
                         break
         if hour == 7 and minute == 0:
-            message = todaySchedule(minimumDay, day)
+            message = await todaySchedule(minimumDay, day)
             for guild in client.guilds:
                 for channel in guild.text_channels:
                     if channel.name == "school-alerts":
