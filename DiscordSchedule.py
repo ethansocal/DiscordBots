@@ -11,6 +11,8 @@ mondaySchedule = "Period 0/5:9:45:10:28;Period 1/6:10:34:11:14;Break:11:14:11:21
 mondaySchedule = mondaySchedule.split(";")
 normalSchedule = "Period 0/5:8:45:9:38;Period 1/6:9:45:10:34;Break:10:34:10:41;Period 2/7:10:48:11:37;Period 3/8:11:14:12:33;Lunch:12:33:13:08;PAWS, click on me to get the PAWS schedule:13:15:13:40;Period 4/9:13:47:14:35;School's Over!:14:35:8:45, tomorrow"
 normalSchedule = normalSchedule.split(";")
+minimumDaySchedule = "Period 0/5:8:45:9:38;Period 1/6:9:45:10:34;Break:10:34:10:41;Period 2/7:10:48:11:37;Period 3/8:11:14:12:33;Period 4/9:13:47:14:35;School's Over!:14:35:Tomorrow"
+minimumDaySchedule = minimumDaySchedule.split(";")
 dummy1 = []
 
 for dummy3 in mondaySchedule:
@@ -21,11 +23,15 @@ dummy1 = []
 for dummy3 in normalSchedule:
     dummy1.append(dummy3.split(":"))
 normalSchedule = dummy1
+dummy1 = []
+for dummy3 in minimumDaySchedule:
+    dummy3.split(":")
+    dummy1.append(dummy3)
+minimumDaySchedule.append(dummy3)
 dummy3 = None
 dummy1 = None
 
 async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd="45", day="Monday"):
-
     if message == "PAWS, click on me to get the PAWS schedule":
         url = "https://drive.google.com/file/d/1yg_afS4BswjBJY-13YsUEICAQJTOwHh5/view"
     else:
@@ -35,11 +41,16 @@ async def alert(message, hourStart="8", minuteStart="45", hourEnd="9", minuteEnd
     embed.add_field(name="Class", value=message, inline=False)
     embed.add_field(name="Start Time", value=hourStart+":"+minuteStart, inline=True)
     embed.add_field(name="End Time", value=hourEnd+":"+minuteEnd, inline=True)
+    if message == "School's Over!":
+        for guild in client.guilds:
+            for channel in guild.text_channels:
+                if channel.id == 814182189460881518:
+                    channel.purge()
     for guild in client.guilds:
         for channel in guild.text_channels:
             if channel.name == "school-alerts":
                 message = await channel.send(embed=embed)
-                
+
 @client.event
 async def on_ready():
     await alert("Class Alert")
@@ -72,6 +83,14 @@ async def schedule():
     minute = int(now.strftime("%M"))
     second = int(now.strftime("%S"))
     day = now.strftime("%A")
+    minimumDay = False
+    for guild in client.guilds:
+        if guild.id == 814005846718808075:
+            for channel in guild.text_channels:
+                if channel.id == 814182189460881518:
+                    messages = await channel.history().flatten()
+                    if len(messages) > 0:
+                        minimumDay = True
     if second == 0:
         if day == "Monday":
             for time in mondaySchedule:
@@ -80,10 +99,18 @@ async def schedule():
                     await alert(time[0], time[1], time[2], time[3], time[4], day)
                     break
         elif day != "Sunday" and day != "Saturday":
-            for time in normalSchedule:
-                if hour == int(time[1]) and minute == int(time[2]):
-                    print(time[0])
-                    await alert(time[0], time[1], time[2], time[3], time[4], day)
-                    break
+            if minimumDay:
+                for time in minimumDaySchedule:
+                    if hour == int(time[1]) and minute == int(time[2]):
+                        print(time[0])
+                        await alert(time[0], time[1], time[2], time[3], time[4], day)
+                        break
+            else:
+                for time in normalSchedule:
+                    if hour == int(time[1]) and minute == int(time[2]):
+                        print(time[0])
+                        await alert(time[0], time[1], time[2], time[3], time[4], day)
+                        break
+        
 
 client.run(TOKEN)
