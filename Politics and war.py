@@ -21,7 +21,8 @@ async def on_ready():
         print(["\u001b[34m","\u001b[31m","\u001b[33m","\u001b[34m","\u001b[35m","\u001b[36m","\u001b[37m"][random.randint(0, 6)]+"!"+command.name+": "+command.help)
 
     print("\u001b[0m",end="")
-    #update.start()
+    update.start()
+
 @bot.command(help="Put a city ID or name to get the city/cities that correspond.", brief="Get a city by it's ID or name",aliases=["city"])
 async def getcity(ctx, nameOrID):
     try:
@@ -80,32 +81,44 @@ async def who(ctx, nameOrID):
         if data["success"] != False:
             embed.add_field(name="Link", value=f"[Nation Link](https://politicsandwar.com/nation/?id={data['nationid']})")
             for dataName in data:
-                if dataName != "success" and data["success"] == True:
+                if dataName != "success" and data["success"] == True and dataName != "flagurl":
                     if data[dataName] != "":
                         embed.add_field(name=dataName, value=data[dataName])
                     else:
                         embed.add_field(name=dataName,value="None")
+            embed.set_thumbnail(url=data["flagurl"])
             await ctx.send(embed=embed)
         else:
             await ctx.send("There was an error. Please try again.")
+            return
     except ValueError:
         loading = await ctx.send("Gathering nations, please wait <a:loading:747680523459231834> ...")
         file = open("nations_cache.txt", "r")
-        text = file.read()
+        text = file.readlines()
         file.close()
-        for nation in text.split("\n"):
-            hi = nation.split(":")
-            print(nation)
-            if hi[1].lower() == nameOrID.lower():
-                data2 = requests.get(f"http://politicsandwar.com/api/nation/?id={hi[1]}&key={PoliticsAndWarToken}")
-                data2 = data2.json()
+        
+        for nation in text:
+            if nation == "":
+                ctx.send("There was an error. Please try again.")
+                return
+            data1 = nation.split(":")
+            if data1[0].lower() == nameOrID.lower():
+                data  = requests.get(f"http://politicsandwar.com/api/nation/id={data1[1]}&key={PoliticsAndWarToken}")
+                data = data.json()
                 embed = discord.Embed(title="Get Nation Results", color=0x00ff00)
-                print(data2)
-                for dataName in data2:
-                    if dataName != "success" and data2[dataName] == "":
-                        embed.add_field(name=dataName, value=data2[dataName])
-                embed.add_field(name="Link",value=f"https://politicsandwar.com/nation/?id={hi[1]}")
-                await ctx.send(embed=embed)
+                if data["success"] != False:
+                    embed.add_field(name="Link", value=f"[Nation Link](https://politicsandwar.com/nation/?id={data1[1]})")
+                    for dataName in data:
+                        if dataName != "success" and data["success"] == True and dataName != "flagurl":
+                            if data[dataName] != "":
+                                embed.add_field(name=dataName, value=data[dataName])
+                            else:
+                                embed.add_field(name=dataName,value="None")
+                    embed.set_thumbnail(url=data["flagurl"])
+                    await ctx.send(embed=embed)
+                else:
+                    await ctx.send("There was an error. Please try again.")
+                    return
                 break
         await loading.delete()
 
