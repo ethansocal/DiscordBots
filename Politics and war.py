@@ -132,10 +132,9 @@ async def update():
         file.write(str(thing["nation"]) + ":"+str(thing["nationid"])+"\n")
     file.close()
     print("Done")
-"""
+
 @bot.event
 async def on_command_error(ctx, error):
     await ctx.send(error)
-"""
 
 bot.run(TOKEN)
