@@ -23,6 +23,11 @@ async def on_ready():
     print("\u001b[0m",end="")
     update.start()
 
+@bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
+async def tradeprice(ctx, resource="all"):
+    data = requests.get(f"http://politicsandwar.com/api/tradeprice")
+    data = data.json()
+
 @bot.command(help="Put a city ID or name to get the city/cities that correspond.", brief="Get a city by it's ID or name",aliases=["city"])
 async def getcity(ctx, nameOrID):
     try:
