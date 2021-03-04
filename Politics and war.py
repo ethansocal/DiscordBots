@@ -99,7 +99,7 @@ async def who(ctx, nameOrID):
         
         for nation in text:
             if nation == "":
-                ctx.send("There was an error. Please try again.")
+                await ctx.send("There was an error. Please try again.")
                 return
             data1 = nation.split(":")
             if data1[0].lower() == nameOrID.lower():
@@ -116,11 +116,16 @@ async def who(ctx, nameOrID):
                                 embed.add_field(name=dataName,value="None")
                     embed.set_thumbnail(url=data["flagurl"])
                     await ctx.send(embed=embed)
+                    await loading.delete()
+                    return
                 else:
+                    await loading.delete()
                     await ctx.send("There was an error. Please try again.")
                     return
                 break
         await loading.delete()
+        await ctx.send("There was an error. Please try again.")
+        
 
 @tasks.loop(hours=1)
 async def update():
