@@ -2,3 +2,6 @@
 .env
 __pycache__
 nations_cache.txt
+testing.py
+equation.py
+answers.txt
