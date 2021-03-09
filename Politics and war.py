@@ -25,6 +25,7 @@ async def on_ready():
 @bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
 async def tradeprice(ctx, resource):
     if not resource.lower() in ["steel",'credits','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
+        await ctx.send("Incorrect resource. Please try again.")
         return
     data = requests.get(f"http://politicsandwar.com/api/tradeprice/?resource={resource.lower()}&key={PoliticsAndWarToken}")
     data = data.json()
@@ -32,6 +33,7 @@ async def tradeprice(ctx, resource):
     embed.add_field(name="Average Price", value=data["avgprice"])
     embed.add_field(name="Highest Buy", value=f"```Date: {data['highestbuy']['date']}\nNation ID: {data['highestbuy']['nationid']}\nAmount: {data['highestbuy']['amount']}\nPrice Per Unit: ${data['highestbuy']['price']}\nTotal Price: {data['highestbuy']['totalvalue']}```")
     embed.add_field(name="Lowest Buy", value=f"```Date: {data['lowestbuy']['date']}\nNation ID: {data['lowestbuy']['nationid']}\nAmount: {data['lowestbuy']['amount']}\nPrice Per Unit: ${data['lowestbuy']['price']}\nTotal Price: {data['lowestbuy']['totalvalue']}```")
+    await ctx.send(embed=embed)
 
 @bot.command(help="Put a city ID or name to get the city/cities that correspond.", brief="Get a city by it's ID or name",aliases=["city"])
 async def getcity(ctx, *, nameOrID : typing.Union[int, str]):
