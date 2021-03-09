@@ -30,7 +30,7 @@ async def tradeprice(ctx, resource):
     data = requests.get(f"http://politicsandwar.com/api/tradeprice/?resource={resource.lower()}&key={PoliticsAndWarToken}")
     data = data.json()
     embed = discord.Embed(title=data["resource"].capitalize(),color=0x03b1fc)
-    embed.add_field(name="Average Price", value="```"+data["avgprice"]+"```",inline=False)
+    embed.add_field(name="Average Price", value="```$"+data["avgprice"]+"```",inline=False)
     embed.add_field(name="Highest Buy", value=f"```Date: {data['highestbuy']['date']}\nNation ID: {data['highestbuy']['nationid']}\nAmount: {data['highestbuy']['amount']}\nPrice Per Unit: ${data['highestbuy']['price']}\nTotal Price: {data['highestbuy']['totalvalue']}```")
     embed.add_field(name="Lowest Buy", value=f"```Date: {data['lowestbuy']['date']}\nNation ID: {data['lowestbuy']['nationid']}\nAmount: {data['lowestbuy']['amount']}\nPrice Per Unit: ${data['lowestbuy']['price']}\nTotal Price: {data['lowestbuy']['totalvalue']}```")
     await ctx.send(embed=embed)
