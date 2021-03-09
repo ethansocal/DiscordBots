@@ -7,6 +7,7 @@ import asyncio
 import random
 from discord.ext import tasks
 import json
+import typing
 
 load_dotenv()
 TOKEN = os.getenv("POLITICS_BOT_TOKEN")
@@ -18,20 +19,19 @@ async def on_ready():
     print(bot.user.name + " has connected to Discord!")
     print("Availiable Commands\n===================")
     for command in bot.commands:
-        print(["\u001b[34m","\u001b[31m","\u001b[33m","\u001b[34m","\u001b[35m","\u001b[36m","\u001b[37m"][random.randint(0, 6)]+"!"+command.name+": "+command.help)
-
-    print("\u001b[0m",end="")
+        print("!"+command.name+": "+command.help)
     update.start()
 
 @bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
-async def tradeprice(ctx, resource="all"):
-    data = requests.get(f"http://politicsandwar.com/api/tradeprice")
+async def tradeprice(ctx, resource):
+    if not resource,lower() in ["steel",'credits','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']
+    data = requests.get(f"http://politicsandwar.com/api/tradeprice/?resource={resource.lower()}&key={PoliticsAndWarToken}")
     data = data.json()
+    embed = discord.Embed(title="Resource Price")
 
 @bot.command(help="Put a city ID or name to get the city/cities that correspond.", brief="Get a city by it's ID or name",aliases=["city"])
-async def getcity(ctx, nameOrID):
-    try:
-        int(nameOrID)
+async def getcity(ctx, *, nameOrID : typing.Union[int, str]):
+    if type(nameOrID) == int:
         data  = requests.get(f"http://politicsandwar.com/api/city/id={nameOrID}&key={PoliticsAndWarToken}")
         data = data.json()
         embed = discord.Embed(title="Get City Results", color=0x00ff00)
@@ -41,7 +41,7 @@ async def getcity(ctx, nameOrID):
             elif dataName != "success" and data["success"] == True:
                 embed.add_field(name=dataName, value=data[dataName])
         await ctx.send(embed=embed)
-    except ValueError:
+    else:
         loading = await ctx.send("Gathering cities, please wait <a:loading:747680523459231834> ...")
         cities = []
         data  = requests.get(f"http://politicsandwar.com/api/all-cities/key={PoliticsAndWarToken}")
@@ -70,16 +70,15 @@ async def getcity(ctx, nameOrID):
                 await ctx.send(embed=city)
 
 @bot.command(help="Invite others to play. To use your own referral, put your leader name in quotation marks after !invite", brief="Invite others to play", aliases=["refer","referral"])
-async def invite(ctx, leaderName="Ethan Henry"):
+async def invite(ctx, *, leaderName="Ethan Henry"):
     leaderNameFormatted = leaderName.replace(" ", "+")
     embed = discord.Embed(title="Invite others to Politics and War!", url="https://politicsandwar.com/register/ref="+leaderNameFormatted)
     embed.set_image(url="https://pbs.twimg.com/profile_images/876630922547740672/dcqCkdZm.jpg")
     await ctx.send(embed=embed)
 
 @bot.command(help="Get a nation by its ID or name.",aliases=["nation","getnation"])
-async def who(ctx, nameOrID):
-    try:
-        int(nameOrID)
+async def who(ctx, *, nameOrID : typing.Union[int, str]):
+    if type(nameOrID) == int:
         data  = requests.get(f"http://politicsandwar.com/api/nation/id={nameOrID}&key={PoliticsAndWarToken}")
         data = data.json()
         embed = discord.Embed(title="Get Nation Results", color=0x00ff00)
@@ -88,7 +87,7 @@ async def who(ctx, nameOrID):
             for dataName in data:
                 if dataName != "success" and data["success"] == True and dataName != "flagurl":
                     if data[dataName] != "":
-                        embed.add_field(name=dataName, value=data[dataName])
+                        embed.add_field(name=dataName, value=str(data[dataName]))
                     else:
                         embed.add_field(name=dataName,value="None")
             embed.set_thumbnail(url=data["flagurl"])
@@ -96,7 +95,7 @@ async def who(ctx, nameOrID):
         else:
             await ctx.send("There was an error. Please try again.")
             return
-    except ValueError:
+    else:
         loading = await ctx.send("Gathering nations, please wait <a:loading:747680523459231834> ...")
         file = open("nations_cache.txt", "r")
         text = file.readlines()
@@ -134,14 +133,18 @@ async def who(ctx, nameOrID):
 
 @tasks.loop(hours=1)
 async def update():
-    print("Updating nation cache...")
-    data = requests.get(f"https://politicsandwar.com/api/nations/?key={PoliticsAndWarToken}")
-    data = data.json()
-    file = open("nations_cache.txt", "w")
-    for thing in data["nations"]:
-        file.write(str(thing["nation"]) + ":"+str(thing["nationid"])+"\n")
-    file.close()
-    print("Done")
+    try:
+        print("Updating nation cache...")
+        data = requests.get(f"https://politicsandwar.com/api/nations/?key={PoliticsAndWarToken}")
+        data = data.json()
+        file = open("nations_cache.txt", "w")
+        for thing in data["nations"]:
+            file.write(str(thing["nation"]) + ":"+str(thing["nationid"])+"\n")
+        print("Done")
+    except:
+        print("Error saving files")
+    finally:
+        file.close()
 
 @bot.event
 async def on_command_error(ctx, error):
