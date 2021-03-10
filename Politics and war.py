@@ -8,10 +8,13 @@ import random
 from discord.ext import tasks
 import json
 import typing
+import wolframalpha
 
 load_dotenv()
 TOKEN = os.getenv("POLITICS_BOT_TOKEN")
 PoliticsAndWarToken = os.getenv("API_TOKEN")
+WolframAlphaToken = os.getenv("WOLFRAM_ALPHA_TOKEN")
+WolframAlphaClient = wolframalpha.Client("JX5AXE-TJWTE43T96")
 bot = commands.Bot(command_prefix="!")
 
 @bot.event
@@ -20,7 +23,12 @@ async def on_ready():
     print("Availiable Commands\n===================")
     for command in bot.commands:
         print("!"+command.name+": "+command.help)
-    update.start()
+    #update.start()
+
+@bot.command(help="Get a smart answer from Wolfram Alpha. Get math help, quick answers, and AI answers.",brief="Get an answer from Wolfram Alpha.")
+async def answer(ctx, *, question : str):
+    data = WolframAlphaClient.query(question)
+    await ctx.send(next(data.results).text)
 
 @bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
 async def tradeprice(ctx, resource):
