@@ -31,12 +31,21 @@ async def answer(ctx, *, question : str):
     data = WolframAlphaClient.query(question)
     await ctx.message.reply(next(data.results).text)
 
-@bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
-async def tradeprice(ctx, resource):
-    if not resource.lower() in ['credits','steel','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
+@bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["price","tradeprices"])
+async def tradeprice(ctx, resource="all"):
+    if resource == "all":
+        file = open('resource_cache.json', 'r')
+        data = json.loads(file.read())
+        file.close()
+        embed = discord.Embed(title="Resource Prices",color=0x03b1fc)
+        for resourceName in data:
+            embed.add_field(name=resourceName.capitalize(), value="{:,}".format(int(data[resourceName])))
+        await ctx.message.reply(embed=embed)
+        return
+    elif not resource.lower() in ['credits','steel','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
         await ctx.message.reply("Incorrect resource. Please try again.")
         return
-    data = requests.get(f"http://politicsandwar.com/api/tradeprice/?resource={resource.lower()}&key={PoliticsAndWarToken}")
+    data = requests.get(f"https://politicsandwar.com/api/tradeprice/?resource={resource}&key={PoliticsAndWarToken}")
     data = data.json()
     embed = discord.Embed(title=data["resource"].capitalize(),color=0x03b1fc)
     embed.add_field(name="Average Price", value="```$"+data["avgprice"]+"```",inline=False)
@@ -169,8 +178,8 @@ async def updateResources():
         for resource in ['steel','credits','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
             data = requests.get(f"https://politicsandwar.com/api/tradeprice/?resource={resource}&key={PoliticsAndWarToken}")
             data = data.json()
-            resourceInfo[resource] = data["avgprice"]
-        file = open("resource_cache.txt", "w")
+            resourceInfo[resource] = int(data["avgprice"])
+        file = open("resource_cache.json", "w")
         file.write(json.dumps(resourceInfo))
         print("Done")
     
