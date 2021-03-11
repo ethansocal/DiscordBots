@@ -28,12 +28,12 @@ async def on_ready():
 @bot.command(help="Get a smart answer from Wolfram Alpha. Get math help, quick answers, and AI answers.",brief="Get an answer from Wolfram Alpha.")
 async def answer(ctx, *, question : str):
     data = WolframAlphaClient.query(question)
-    await ctx.send(next(data.results).text)
+    await ctx.message.reply(next(data.results).text)
 
 @bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
 async def tradeprice(ctx, resource):
     if not resource.lower() in ["steel",'credits','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
-        await ctx.send("Incorrect resource. Please try again.")
+        await ctx.message.reply("Incorrect resource. Please try again.")
         return
     data = requests.get(f"http://politicsandwar.com/api/tradeprice/?resource={resource.lower()}&key={PoliticsAndWarToken}")
     data = data.json()
@@ -41,7 +41,7 @@ async def tradeprice(ctx, resource):
     embed.add_field(name="Average Price", value="```$"+data["avgprice"]+"```",inline=False)
     embed.add_field(name="Highest Buy", value=f"```Date: {data['highestbuy']['date']}\nNation ID: {data['highestbuy']['nationid']}\nAmount: {data['highestbuy']['amount']}\nPrice Per Unit: ${data['highestbuy']['price']}\nTotal Price: {data['highestbuy']['totalvalue']}```")
     embed.add_field(name="Lowest Buy", value=f"```Date: {data['lowestbuy']['date']}\nNation ID: {data['lowestbuy']['nationid']}\nAmount: {data['lowestbuy']['amount']}\nPrice Per Unit: ${data['lowestbuy']['price']}\nTotal Price: {data['lowestbuy']['totalvalue']}```")
-    await ctx.send(embed=embed)
+    await ctx.message.reply(embed=embed)
 
 @bot.command(help="Put a city ID or name to get the city/cities that correspond.", brief="Get a city by it's ID or name",aliases=["city"])
 async def getcity(ctx, *, nameOrID : typing.Union[int, str]):
@@ -54,9 +54,9 @@ async def getcity(ctx, *, nameOrID : typing.Union[int, str]):
                 embed.add_field(name="Link", value=f"[City Link]({data[dataName]})")
             elif dataName != "success" and data["success"] == True:
                 embed.add_field(name=dataName, value=data[dataName])
-        await ctx.send(embed=embed)
+        await ctx.message.reply(embed=embed)
     else:
-        loading = await ctx.send("Gathering cities, please wait <a:loading:747680523459231834> ...")
+        loading = await ctx.message.reply("Gathering cities, please wait <a:loading:747680523459231834> ...")
         cities = []
         data  = requests.get(f"http://politicsandwar.com/api/all-cities/key={PoliticsAndWarToken}")
         data = data.json()
@@ -69,26 +69,26 @@ async def getcity(ctx, *, nameOrID : typing.Union[int, str]):
                 cities.append(embed)
         await loading.delete()
         if len(cities) == 1:
-            await ctx.send(str(len(cities))+ " city with the name "+nameOrID+" was found.")
+            await ctx.message.reply(str(len(cities))+ " city with the name "+nameOrID+" was found.")
             data = requests.get(f'http://politicsandwar.com/api/city/id={cities[0].fields[1].value}&key={PoliticsAndWarToken}')
             data = data.json()
             embed = discord.Embed(title="Get City Results", color=0xff0000)
             for dataName in data:
                 if dataName != "success":
                     embed.add_field(name=dataName, value=data[dataName])
-            await ctx.send(embed=embed) 
+            await ctx.message.reply(embed=embed) 
         else:
-            await ctx.send(str(len(cities))+ " cities with the name "+nameOrID+" were found.")
+            await ctx.message.reply(str(len(cities))+ " cities with the name "+nameOrID+" were found.")
             await asyncio.sleep(3) 
             for city in cities:
-                await ctx.send(embed=city)
+                await ctx.message.reply(embed=city)
 
 @bot.command(help="Invite others to play. To use your own referral, put your leader name in quotation marks after !invite", brief="Invite others to play", aliases=["refer","referral"])
 async def invite(ctx, *, leaderName="Ethan Henry"):
     leaderNameFormatted = leaderName.replace(" ", "+")
     embed = discord.Embed(title="Invite others to Politics and War!", url="https://politicsandwar.com/register/ref="+leaderNameFormatted)
     embed.set_image(url="https://pbs.twimg.com/profile_images/876630922547740672/dcqCkdZm.jpg")
-    await ctx.send(embed=embed)
+    await ctx.message.reply(embed=embed)
 
 @bot.command(help="Get a nation by its ID or name.",aliases=["nation","getnation"])
 async def who(ctx, *, nameOrID : typing.Union[int, str]):
@@ -105,19 +105,19 @@ async def who(ctx, *, nameOrID : typing.Union[int, str]):
                     else:
                         embed.add_field(name=dataName,value="None")
             embed.set_thumbnail(url=data["flagurl"])
-            await ctx.send(embed=embed)
+            await ctx.message.reply(embed=embed)
         else:
-            await ctx.send("There was an error. Please try again.")
+            await ctx.message.reply("There was an error. Please try again.")
             return
     else:
-        loading = await ctx.send("Gathering nations, please wait <a:loading:747680523459231834> ...")
+        loading = await ctx.message.reply("Gathering nations, please wait <a:loading:747680523459231834> ...")
         file = open("nations_cache.txt", "r")
         text = file.readlines()
         file.close()
         
         for nation in text:
             if nation == "":
-                await ctx.send("There was an error. Please try again.")
+                await ctx.message.reply("There was an error. Please try again.")
                 return
             data1 = nation.split(":")
             if data1[0].lower() == nameOrID.lower():
@@ -133,16 +133,16 @@ async def who(ctx, *, nameOrID : typing.Union[int, str]):
                             else:
                                 embed.add_field(name=dataName,value="None")
                     embed.set_thumbnail(url=data["flagurl"])
-                    await ctx.send(embed=embed)
+                    await ctx.message.reply(embed=embed)
                     await loading.delete()
                     return
                 else:
                     await loading.delete()
-                    await ctx.send("There was an error. Please try again.")
+                    await ctx.message.reply("There was an error. Please try again.")
                     return
                 break
         await loading.delete()
-        await ctx.send("There was an error. Please try again.")
+        await ctx.message.reply("There was an error. Please try again.")
         
 
 @tasks.loop(hours=1)
@@ -162,6 +162,23 @@ async def update():
 
 @bot.event
 async def on_command_error(ctx, error):
-    await ctx.send(error)
+    embed = discord.Embed(title="Error", color=0xff00ff)
+    embed.add_field(name="Command:",value=ctx.command+" by "+ctx.author)
+    if isinstance(error, commands.DisabledCommand):
+        embed.add_field(name="Error Message",value='This command has been disabled.')
+    elif isinstance(error, commands.NoPrivateMessage):
+        try:
+            embed.add_field(name='Error Message',value='This command cannot be used in Private Messages.')
+        except discord.HTTPException:
+            pass
+
+    elif isinstance(error, commands.BadArgument):
+        if ctx.command.qualified_name == 'tag list':
+            embed.add_field(name='Error Message',value='I could not find that member. Please try again.')
+
+    else:
+        embed.add_field(name='Error Message',value="There was an error in this command.")
+        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 bot.run(TOKEN)
