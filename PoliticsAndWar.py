@@ -23,7 +23,8 @@ async def on_ready():
     print("Availiable Commands\n===================")
     for command in bot.commands:
         print("!"+command.name+": "+command.help)
-    #update.start()
+    #updateNations.start()
+    updateResources.start()
 
 @bot.command(help="Get a smart answer from Wolfram Alpha. Get math help, quick answers, and AI answers.",brief="Get an answer from Wolfram Alpha.")
 async def answer(ctx, *, question : str):
@@ -32,7 +33,7 @@ async def answer(ctx, *, question : str):
 
 @bot.command(help="Get the current trade price of a resource.", brief="Get the current trade prices.", aliases=["prices","market"])
 async def tradeprice(ctx, resource):
-    if not resource.lower() in ["steel",'credits','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
+    if not resource.lower() in ['credits','steel','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
         await ctx.message.reply("Incorrect resource. Please try again.")
         return
     data = requests.get(f"http://politicsandwar.com/api/tradeprice/?resource={resource.lower()}&key={PoliticsAndWarToken}")
@@ -146,7 +147,7 @@ async def who(ctx, *, nameOrID : typing.Union[int, str]):
         
 
 @tasks.loop(hours=1)
-async def update():
+async def updateNations():
     try:
         print("Updating nation cache...")
         data = requests.get(f"https://politicsandwar.com/api/nations/?key={PoliticsAndWarToken}")
@@ -158,27 +159,24 @@ async def update():
     except:
         print("Error saving files")
     finally:
+       file.close()
+
+@tasks.loop(hours=1)
+async def updateResources():
+    try:
+        print("Updating resource cache...")
+        resourceInfo = dict()
+        for resource in ['steel','credits','food','gasoline','oil','coal','munitions','uranium','iron', 'lead','bauxite','aluminum']:
+            data = requests.get(f"https://politicsandwar.com/api/tradeprice/?resource={resource}&key={PoliticsAndWarToken}")
+            data = data.json()
+            resourceInfo[resource] = data["avgprice"]
+        file = open("resource_cache.txt", "w")
+        file.write(json.dumps(resourceInfo))
+        print("Done")
+    
+    finally:
         file.close()
+    
 
-@bot.event
-async def on_command_error(ctx, error):
-    embed = discord.Embed(title="Error", color=0xff00ff)
-    embed.add_field(name="Command:",value=ctx.command+" by "+ctx.author)
-    if isinstance(error, commands.DisabledCommand):
-        embed.add_field(name="Error Message",value='This command has been disabled.')
-    elif isinstance(error, commands.NoPrivateMessage):
-        try:
-            embed.add_field(name='Error Message',value='This command cannot be used in Private Messages.')
-        except discord.HTTPException:
-            pass
-
-    elif isinstance(error, commands.BadArgument):
-        if ctx.command.qualified_name == 'tag list':
-            embed.add_field(name='Error Message',value='I could not find that member. Please try again.')
-
-    else:
-        embed.add_field(name='Error Message',value="There was an error in this command.")
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 bot.run(TOKEN)
