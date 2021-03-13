@@ -41,7 +41,7 @@ async def on_ready():
     print("Availiable Commands\n===================")
     for command in bot.commands:
         print("!"+command.name+": "+command.help)
-    #updateNations.start()
+    updateNations.start()
     updateResources.start()
 
 @bot.event
