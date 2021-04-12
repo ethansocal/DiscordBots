@@ -1,0 +1,5 @@
+PyNaCl
+discord.py
+typing
+asyncio
+discord-py-slash-command
