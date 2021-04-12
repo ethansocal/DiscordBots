@@ -8,13 +8,13 @@ import os
 bot = commands.Bot("c>")
 slash = discord_slash.SlashCommand(bot, sync_commands=True)
 
-statuses = ["COCOMELON GETTING BEATEN BY PEWDS"]
+statuses = ["Coco, the best song on Earth"]
 
 @bot.event
 async def on_ready():
     print(f"We have logged in as {bot.user}")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name =f"COCOMELON GETTING BEATEN BY PEWDS"))
-    os.system("ls")
+    os.system("pwd")
 
 @bot.command(name="coco", aliases=["connect", "start", "p", "play"])
 async def coco(ctx: commands.Context):
@@ -24,11 +24,11 @@ async def coco(ctx: commands.Context):
             await ctx.guild.voice_client.disconnect()
         voice_channel = voice.channel
         vc = await voice_channel.connect()
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="\COCO.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\COCO.mp3"))
         await ctx.send("Playing!")
         while True:
             await asyncio.sleep(240)
-            vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="COCO.mp3"))
+            vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\COCO.mp3"))
     else:
         await ctx.send("Please join a voice channel first!")
 
@@ -41,10 +41,10 @@ async def coco(ctx):
         voice_channel = voice.channel
         vc = await voice_channel.connect()
         await ctx.send("Playing!")
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="COCO.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\COCO.mp3"))
         while True:
             await asyncio.sleep(240)
-            vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="COCO.mp3"))
+            vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\COCO.mp3"))
     else:
         await ctx.send("Please join a voice channel first!")
 
@@ -75,11 +75,11 @@ async def lasagna(ctx: commands.Context):
             await ctx.guild.voice_client.disconnect()
         voice_channel = voice.channel
         vc = await voice_channel.connect()
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna.mp3"))
         await ctx.send("Playing!")
         while True:
             await asyncio.sleep(140)
-            vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna.mp3"))
+            vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna.mp3"))
     else:
         await ctx.send("Please join a voice channel first!")
 
@@ -92,10 +92,10 @@ async def lasagna(ctx):
         voice_channel = voice.channel
         vc = await voice_channel.connect()
         await ctx.send("Playing!")
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna.mp3"))
         while True:
             await asyncio.sleep(140)
-            vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna.mp3"))
+            vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna.mp3"))
     else:
         await ctx.send("Please join a voice channel first!")
 
@@ -108,11 +108,11 @@ async def lasagna2(ctx: commands.Context):
             await ctx.guild.voice_client.disconnect()
         voice_channel = voice.channel
         vc = await voice_channel.connect()
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna2.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna2.mp3"))
         await ctx.send("Playing!")
         while True:
             await asyncio.sleep(140)
-            vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna2.mp3"))
+            vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna2.mp3"))
     else:
         await ctx.send("Please join a voice channel first!")
 
@@ -125,12 +125,20 @@ async def lasagna2(ctx):
         voice_channel = voice.channel
         vc = await voice_channel.connect()
         await ctx.send("Playing!")
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna2.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna2.mp3"))
         while True:
             await asyncio.sleep(140)
-            vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\bin\\ffmpeg.exe", source="lasagna2.mp3"))
+            vc.play(discord.FFmpegPCMAudio(executable="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\ffmpeg\\bin\\ffmpeg.exe", source="C:\\Users\\ethan\\Documents\\GitHub\\DiscordBots\\CocoBot\\lasagna2.mp3"))
     else:
         await ctx.send("Please join a voice channel first!")
+
+@bot.command(name="download")
+async def download(ctx: commands.Context):
+    await ctx.send("https://drive.google.com/drive/folders/1M_WGFmTc_AHRCPJTpzwGoeyTgvtJpQ10?usp=sharing")
+
+@slash.slash(name="download", description="Download the songs and music videos!")
+async def download(ctx):
+    await ctx.send("https://drive.google.com/drive/folders/1M_WGFmTc_AHRCPJTpzwGoeyTgvtJpQ10?usp=sharing")
 
 """
 @bot.event
