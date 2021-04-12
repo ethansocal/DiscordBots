@@ -14,7 +14,7 @@ statuses = ["COCOMELON GETTING BEATEN BY PEWDS"]
 async def on_ready():
     print(f"We have logged in as {bot.user}")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name =f"COCOMELON GETTING BEATEN BY PEWDS"))
-    os.system("tree /f")
+    os.system("ls")
 
 @bot.command(name="coco", aliases=["connect", "start", "p", "play"])
 async def coco(ctx: commands.Context):
